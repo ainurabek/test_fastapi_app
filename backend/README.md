@@ -77,12 +77,84 @@ PORT=8000
 
 ### 3. Database Setup
 
-Create your PostgreSQL database, then run Alembic migrations:
+#### Install PostgreSQL
+
+If PostgreSQL is not already installed on your system:
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+**macOS (using Homebrew):**
+```bash
+brew install postgresql
+brew services start postgresql
+```
+
+**Windows:**
+Download and install from [PostgreSQL official website](https://www.postgresql.org/download/windows/)
+
+#### Create Database User and Database
+
+1. **Connect to PostgreSQL as superuser:**
+```bash
+sudo -u postgres psql
+```
+
+2. **Create a new user (replace 'username' and 'password' with your preferred credentials):**
+```sql
+CREATE USER username WITH PASSWORD 'password';
+```
+
+3. **Create the database:**
+```sql
+CREATE DATABASE fastapi_db OWNER username;
+```
+
+4. **Grant privileges to the user:**
+```sql
+GRANT ALL PRIVILEGES ON DATABASE fastapi_db TO username;
+```
+
+5. **Exit PostgreSQL:**
+```sql
+\q
+```
+
+#### Update Environment Configuration
+
+Make sure your `.env` file matches the database credentials you just created:
+
+```env
+DATABASE_URL=postgresql+asyncpg://username:password@localhost:5432/fastapi_db
+```
+
+Replace `username` and `password` with the actual credentials you created above.
+
+#### Verify Database Connection
+
+Test the connection (optional but recommended):
+
+```bash
+psql -h localhost -U username -d fastapi_db
+```
+
+You should be able to connect without errors. Type `\q` to exit.
+
+#### Run Database Migrations
+
+Once the database is set up and accessible, run Alembic migrations to create the tables:
 
 ```bash
 # Run database migrations
 alembic upgrade head
 ```
+
+This will create all the necessary tables for the application.
 
 ### 4. Run the Application
 
